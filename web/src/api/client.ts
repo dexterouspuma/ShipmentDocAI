@@ -75,6 +75,15 @@ export const api = {
     return `${BASE}/documents/${id}/cover-sheet?fmt=${fmt}`
   },
 
+  // Generate (POST) the cover sheet and return the file as a Blob for download.
+  async coverSheet(id: string, fmt: 'pdf' | 'excel'): Promise<Blob> {
+    const res = await fetch(`${BASE}/documents/${id}/cover-sheet?fmt=${fmt}`, {
+      method: 'POST', headers: authHeaders(),
+    })
+    if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`)
+    return res.blob()
+  },
+
   freightConfig(): Promise<FreightCodingConfig> {
     return fetch(`${BASE}/meta/freight-coding-config`, { headers: authHeaders() })
       .then(json<FreightCodingConfig>)

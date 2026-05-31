@@ -67,6 +67,25 @@ export default function DocumentReview() {
     try { setDoc(await api.reject(id!, reason)) } catch (e) { setError(String(e)) } finally { setBusy(false) }
   }
 
+  async function downloadCoverSheet(fmt: 'pdf' | 'excel') {
+    setBusy(true)
+    try {
+      const blob = await api.coverSheet(id!, fmt)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `cover_${doc!.original_filename.replace(/\.pdf$/i, '')}.${fmt === 'pdf' ? 'pdf' : 'xlsx'}`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const approved = doc.status === 'approved' || doc.status === 'cover_sheet_generated'
 
   return (
@@ -81,8 +100,8 @@ export default function DocumentReview() {
           <button className="danger" disabled={busy} onClick={reject}>Reject</button>
         </>}
         {approved && <>
-          <a className="btn" href={api.coverSheetUrl(id, 'pdf')} target="_blank" rel="noreferrer">Cover Sheet (PDF)</a>
-          <a className="btn" href={api.coverSheetUrl(id, 'excel')} target="_blank" rel="noreferrer">Cover Sheet (Excel)</a>
+          <button className="btn" disabled={busy} onClick={() => downloadCoverSheet('pdf')}>Cover Sheet (PDF)</button>
+          <button className="btn" disabled={busy} onClick={() => downloadCoverSheet('excel')}>Cover Sheet (Excel)</button>
         </>}
       </div>
 
