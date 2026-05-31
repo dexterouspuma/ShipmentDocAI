@@ -1,0 +1,63 @@
+name: Deploy
+
+# Builds the api + worker images in ACR and updates the Container Apps.
+# Trigger manually (or on a release tag). Requires the federated-credential
+# (OIDC) secrets below — no long-lived passwords.
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'Image tag to build/deploy'
+        default: 'latest'
+
+permissions:
+  id-token: write     # for azure/login OIDC
+  contents: read
+
+env:
+  RESOURCE_GROUP: rg-shipdocai-dev
+  PREFIX: shipdocai
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve registry name
+        id: acr
+        run: |
+          NAME=$(az acr list -g "$RESOURCE_GROUP" --query "[0].name" -o tsv)
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      # Build images in ACR (no local Docker needed). Dockerfiles expect the repo
+      # root as build context so they can COPY shared/ + api/app/.
+      - name: Build API image
+        run: |
+          az acr build -r ${{ steps.acr.outputs.name }} \
+            -t api:${{ inputs.imageTag }} \
+            -f api/Dockerfile .
+
+      - name: Build worker image
+        run: |
+          az acr build -r ${{ steps.acr.outputs.name }} \
+            -t worker:${{ inputs.imageTag }} \
+            -f workers/Dockerfile .
+
+      - name: Update API container app
+        run: |
+          az containerapp update -g "$RESOURCE_GROUP" -n "${PREFIX}-api" \
+            --image ${{ steps.acr.outputs.name }}.azurecr.io/api:${{ inputs.imageTag }}
+
+      - name: Update worker container app
+        run: |
+          az containerapp update -g "$RESOURCE_GROUP" -n "${PREFIX}-worker" \
+            --image ${{ steps.acr.outputs.name }}.azurecr.io/worker:${{ inputs.imageTag }}

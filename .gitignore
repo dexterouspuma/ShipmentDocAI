@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Node / frontend
+node_modules/
+web/dist/
+web/.vite/
+*.tsbuildinfo
+npm-debug.log*
+
+# Build / OS
+dist/
+build/
+*.log
+.DS_Store
+Thumbs.db
+
+# Azure / deploy
+*.azure/
+azure.env
+
+# Samples may contain real customer data — keep out of git by default.
+# Comment the next two lines if you intentionally want to version samples.
+samples/**/*.pdf
+!samples/**/SAMPLE_*.pdf
+
+# Real cover-sheet workbooks contain live business data (vendors, invoice #s,
+# G/L codes) — keep out of git. The README documents the expected format.
+templates/cover-sheets/*.xlsx
+templates/cover-sheets/*.xls
+
+# Local persisted data (saved G/L defaults, etc.)
+.localdata/

@@ -1,0 +1,26 @@
+# Web framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-multipart==0.0.17      # file uploads
+
+# Config & models
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Azure SDKs (used when ENVIRONMENT != local)
+azure-storage-blob==12.24.0
+azure-servicebus==7.12.3
+azure-identity==1.19.0
+
+# Azure SQL (pyodbc requires the ODBC Driver 18 for SQL Server)
+pyodbc==5.2.0
+
+# Auth — validate Entra ID JWTs
+PyJWT[crypto]==2.10.1
+
+# Cover sheets
+reportlab==4.5.1      # PDF
+openpyxl==3.1.5       # Excel
+
+# PDF page count on intake
+pypdf==5.1.0

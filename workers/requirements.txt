@@ -1,0 +1,8 @@
+# Queue consumer + extraction worker
+azure-servicebus==7.12.3
+azure-identity==1.19.0
+azure-storage-blob==12.24.0
+azure-ai-documentintelligence==1.0.0   # Document Intelligence SDK (2024-11 GA)
+pyodbc==5.2.0                            # Azure SQL persistence
+pydantic==2.10.3
+pydantic-settings==2.6.1
