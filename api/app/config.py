@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     environment: str = "local"          # local | dev | prod
+    bypass_auth: bool = False           # skip JWT validation (dev only)
     log_level: str = "INFO"
     low_confidence_threshold: float = 0.80
 
@@ -40,6 +41,11 @@ class Settings(BaseSettings):
 
     # SQL
     sql_connection_string: str = ""
+
+    # Azure AI Agent
+    azure_ai_endpoint: str = ""
+    azure_ai_agent_name: str = ""
+    azure_ai_agent_version: str = "1"
 
     # Entra ID auth
     entra_tenant_id: str = ""

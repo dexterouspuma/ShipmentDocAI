@@ -65,5 +65,8 @@ _instance: QueueClient | None = None
 def get_queue() -> QueueClient:
     global _instance
     if _instance is None:
-        _instance = LocalQueue() if settings.is_local else AzureServiceBusQueue()
+        if settings.is_local or not settings.servicebus_namespace and not settings.servicebus_connection_string:
+            _instance = LocalQueue()
+        else:
+            _instance = AzureServiceBusQueue()
     return _instance

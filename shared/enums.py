@@ -17,6 +17,7 @@ class TransportMode(str, Enum):
     OCEAN_FCL = "ocean_fcl"
     OCEAN_LCL = "ocean_lcl"
     AIR = "air"
+    ROAD = "road"
     UNKNOWN = "unknown"
 
 

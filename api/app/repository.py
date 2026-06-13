@@ -90,5 +90,8 @@ _instance: Repository | None = None
 def get_repository() -> Repository:
     global _instance
     if _instance is None:
-        _instance = InMemoryRepository() if settings.is_local else AzureSqlRepository()
+        if settings.is_local or not settings.sql_connection_string:
+            _instance = InMemoryRepository()
+        else:
+            _instance = AzureSqlRepository()
     return _instance

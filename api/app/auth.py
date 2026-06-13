@@ -27,7 +27,7 @@ class User:
 def current_user(
     creds: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
 ) -> User:
-    if settings.is_local:
+    if settings.is_local or settings.bypass_auth:
         return User(id="local-analyst", name="Local Analyst", email="analyst@local")
 
     if creds is None:

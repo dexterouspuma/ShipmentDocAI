@@ -9,6 +9,14 @@ from app.routers import documents, review, cover_sheet, freight_coding
 
 logging.basicConfig(level=settings.log_level)
 
+import os as _os
+if settings.azure_ai_endpoint:
+    _os.environ.setdefault("AZURE_AI_ENDPOINT", settings.azure_ai_endpoint)
+if settings.azure_ai_agent_name:
+    _os.environ.setdefault("AZURE_AI_AGENT_NAME", settings.azure_ai_agent_name)
+if settings.azure_ai_agent_version:
+    _os.environ.setdefault("AZURE_AI_AGENT_VERSION", settings.azure_ai_agent_version)
+
 app = FastAPI(
     title="Shipment Document AI",
     version="0.1.0",
@@ -36,7 +44,8 @@ def _wire_local_extraction() -> None:
 
     Wired at import time (not a startup event) so it applies whether or not the
     TestClient is used as a context manager."""
-    if not settings.is_local:
+    from app.services.queue import get_queue as _gq, LocalQueue
+    if not isinstance(_gq(), LocalQueue):
         return
     import sys
     import pathlib

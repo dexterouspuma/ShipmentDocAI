@@ -71,6 +71,8 @@ _instance: StorageClient | None = None
 def get_storage() -> StorageClient:
     global _instance
     if _instance is None:
-        _instance = LocalStorage(settings.local_storage_dir) if settings.is_local \
-            else AzureBlobStorage()
+        if settings.is_local or not settings.storage_account_name and not settings.storage_connection_string:
+            _instance = LocalStorage(settings.local_storage_dir)
+        else:
+            _instance = AzureBlobStorage()
     return _instance
